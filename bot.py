@@ -2,17 +2,17 @@
 # -*- coding: utf-8 -*-
 
 #a bot that replies with youtube songs that were mentioned in the comments
-import traceback
-import praw
-import time
-import sqlite3
-import socket
 import re
-import urllib
-from bs4 import BeautifulSoup
+import socket
+import sqlite3
 import sys
+import time
+import traceback
+import urllib
 import urllib2
 
+import praw
+from bs4 import BeautifulSoup
 
 '''USER CONFIGURATION'''
 
@@ -24,7 +24,7 @@ APP_REFRESH = ""
 USERAGENT = "Python automatic youtube linkerbot"
 # This is a short description of what the bot does.
 # For example "Python automatic replybot v2.0 (by /u/GoldenSights)"
-SUBREDDIT = ""
+SUBREDDIT = "90sHipHop+altrap+asianrap+backspin+ChapHop+Gfunk+HipHopHeads+Rap+rapverses+trapmuzik+Turntablists+80sHardcorePunk+90sAlternative+90sRock+AlternativeRock+AltCountry+AORMelodic+ausmetal+BlackMetal+bluegrass+Blues+bluesrock+CanadianClassicRock+CanadianMusic+ClassicRock+country+Christcore+crunkcore+deathcore+deathmetal+Djent+DoomMetal+Emo+EmoScreamo+folk+folkmetal+folkpunk+folkrock+GaragePunk+GothicMetal+Grunge+hardcore+HardRock+horrorpunk+indie_rock+jrock+krautrock+MathRock+melodicdeathmetal+MelodicMetal+MetalNews+metal+metalcore+monsterfuzz+neopsychedelia+NewWave+noiserock+numetal+pianorock+poppunkers+PostHardcore+PostRock+powermetal+powerpop+ProgMetal+progrockmusic+PsychedelicRock+punk+Punkskahardcore+Punk_Rock+Rock+shoegaze+stonerrock+symphonicblackmetal+symphonicmetal+synthrock+truethrash+Truemetal+OutlawCountry+WomenRock+90sHipHop+altrap+asianrap+backspin+ChapHop+Gfunk+HipHopHeads+Rap+rapverses+trapmuzik+Turntablists+scottishmusic+danktunes+albumaday+albumoftheday+Albums+albumlisteners+bassheavy+Catchysongs+CircleMusic+CoverSongs+DutchMusic+EarlyMusic+earlymusicalnotation+FemaleVocalists+findaband+freemusic+jazz+Frisson+gameofbands+GayMusic+germusic+HeadNodders+heady+HeyThatWasIn+HighFidelity+ifyoulikeblank+indie+Instrumentals+IndieWok+ipm+IsolatedVocals+japanesemusic+LetsTalkMusic+listentoconcerts+listentomusic+ListenToThis+ListenToUs+livemusic+Lyrics+mainstreammusic+MiddleEasternMusic+Music+MusicAlbums+musicsuggestions+MusicToSleepTo+musicvideos+NewAlbums+newmusic+onealbumaweek+partymusic+RedditOriginals+RepublicOfMusic+RoyaltyFreeMusic+SlavicMusicVideos+SpotifyMusic+ThemVoices+unheardof+WhatIListenTo+WTFMusicVideos+music+tipofmytongue+namethattune+whatsthatsong+whatsthesong+whatsthissong+NameThatSong+kqly+311+ADTR+AliciaKeys+ArcadeFire+ArethaFranklin+APerfectCircle+TheAvettBrothers+BaysideIsACult+TheBeachBoys+Beatles+billytalent+Blink182+BMSR+BoBurnham+boniver+brandnew+BruceSpringsteen+Burial+ChristinaAguilera+cityandcolour+Coldplay+CutCopy+TheCure+DaftPunk+DavidBowie+Deadmau5+DeathCabforCutie+DeathGrips+DeepPurple+Deftones+DieAntwoord+DMB+elliegoulding+Eminem+empireofthesun+EnterShikari+Evanescence+feedme+FirstAidKit+flaminglips+franzferdinand+Gorillaz+gratefuldead+Greenday+GunsNRoses+Incubus+JackJohnson+JackWhite+JanetJackson+John_frusciante+kings_of_leon+Korn+ladygaga+lanadelrey+lennykravitz+Led_Zeppelin+lorde+Macklemore+Madonna+Manowar+MariahCarey+MattAndKim+Megadeth+Metallica+MGMT+MichaelJackson+MinusTheBear+ModestMouse+Morrissey+mrbungle+MyChemicalRomance+Muse+NeilYoung+NIN+Nirvana+NOFX+oasis+Opeth+OFWGKTA+OutKast+panicatthedisco+PearlJam+phish+Pinback+PinkFloyd+porcupinetree+prettylights+Puscifer+Queen+Radiohead+RATM+RedHotChiliPeppers+The_Residents+RiseAgainst+Rush+SigurRos+Slayer+slipknot+SmashingPumpkins+SparksFTW+TeganAndSara+TheKillers+TheOffspring+TheStrokes+TheMagneticZeros+tragicallyhip+ToolBand+U2Band+Umphreys+UnicornsMusic+velvetunderground+Ween+weezer+WeirdAl+yesband+Zappa"
 # This is the sub or list of subs to scan for new posts. For a single sub, use "sub1". For multiple subreddits, use "sub1+sub2+sub3+..."
 DO_SUBMISSIONS = False
 DO_COMMENTS = True
@@ -106,6 +106,9 @@ def replybot():
 
                         if isinstance(post, praw.objects.Comment):
                             pbody = post.body
+                            for ch in ['(',')']:
+                                if ch in pbody:
+                                    pbody=pbody.replace(ch,"")
                         else:
                             pbody = '%s %s' % (post.title, post.selftext)
                         pbody = pbody.lower()
@@ -135,7 +138,8 @@ def replybot():
                                 author, song_name = song_string_generator(pbody)
                                 url = 'https://songlyrics.com/'+author+'/'+song_name+'-lyrics/'
 
-                                post.reply("[**"+temp+"**]("+res+") \n ---- \n [**^^[Song ^^Lyrics]**] ("+url+") ^^| [**^^[Contact ^^me]**](https://www.reddit.com/message/compose?to=itailitai) ^^| ^^[**[Github]**](https://github.com/itailitai/Reddit-songs-to-youtube-bot)")
+                                post.reply("[**"+temp+"**]("+res+") \n ---- \n [**^^[Song ^^Lyrics]**] ("+url+") ^^| [**^^[Contact ^^me]**](https://www.reddit.com/message/compose?to=itailitai) ^^| ^^[**[Github]**](https://github.com/itailitai/Reddit-songs-to-youtube-bot) \n\n ^^Parent ^^commenter ^^can ^^reply ^^with ^^'delete'. ^^Will ^^also ^^delete ^^if ^^comment ^^score ^^is ^^-1 ^^or ^^less.")
+                                # r.send_message('itailitai', 'SOME SUBJECT', 'Your bot just commented, check his profile : /u/youtubesong')
 
                         except praw.errors.Forbidden:
                             print('403 FORBIDDEN - is the bot banned from %s?' % post.subreddit.display_name)
@@ -275,10 +279,51 @@ def first_youtube(textToSearch):
 
 def deleteowncomments():
     print ("Comments deleting procedure has started")
-    user=r.get_redditor("your reddit bot user")
+    user=r.get_redditor("youtubesong")
     for c in user.get_comments(limit=None):
         if c.score < 0 :
 	        c.delete()
+
+
+def removebyreply():
+    try:
+        print(0)
+        unread = r.get_unread(limit=None)
+        print(1)
+        for msg in unread:
+            if msg.body.lower() == 'delete':
+                try:
+                    print(3)
+                    id = msg.id
+                    id = 't1_' + id
+                    comment = r.get_info(thing_id=id)
+                    comment= r.get_info(thing_id=comment.parent_id)
+                    comment_parent = r.get_info(thing_id=comment.parent_id)
+                    if msg.author.name == comment_parent.author.name or msg.author.name == 'itailitai':
+                        print(4)
+                        if "which was a reply to" not in comment.body:
+                            comment.delete()
+                            msg.reply('I have deleted [my comment](' + comment.permalink + '), which was a reply to [your comment](' + comment_parent.permalink + ').\n\nHave an amazing day, **' + str(msg.author.name) + '**!\n\n----- \n\n  [**^^[Contact ^^me]**](https://www.reddit.com/message/compose?to=itailitai) ^^| ^^[**[Github]**](https://github.com/itailitai/Reddit-songs-to-youtube-bot)')
+                            msg.mark_as_read()
+                        else:
+                            msg.mark_as_read()
+                    else:
+                        print(5)
+                        msg.mark_as_read()
+
+                except Exception as e:
+                    if (str(e) == "'NoneType' object has no attribute 'name'"):
+                        print(6)
+                        comment.delete()
+                        msg.reply('I have deleted [my comment](' + comment.permalink + '), which was a reply to this [comment](' + comment_parent.permalink + ').\n\nHave an amazing day, **' + str(msg.author.name) + '**!\n\n----- \n\n  [**^^[Contact ^^me]**](https://www.reddit.com/message/compose?to=itailitai) ^^| ^^[**[Github]**](https://github.com/itailitai/Reddit-songs-to-youtube-bot)')
+                    else:
+                        print(7)
+                        continue
+                    msg.mark_as_read()
+                    continue
+    except Exception:
+        print(8)
+        None
 
 
 cycles = 0
@@ -286,6 +331,7 @@ while True:
     try:
         replybot()
         cycles += 1
+        removebyreply()
     except Exception as e:
         traceback.print_exc()
     if cycles >= CLEANCYCLES:
